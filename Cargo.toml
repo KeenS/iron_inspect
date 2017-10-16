@@ -1,0 +1,14 @@
+[package]
+authors = ["Sunrin SHIMURA (keen) <3han5chou7@gmail.com>"]
+name = "iron_inspect"
+version = "0.1.0"
+license = "MIT OR Apache-2.0"
+description = "Inspect the result of Iron"
+readme = "README.md"
+documentation = "http://docs.rs/iron_inspect"
+repository = "https://github.com/KeenS/iron_inspect"
+keywords = ["iron", "log", "error", "debug"]
+categories = ["web-programming"]
+
+[dependencies]
+iron = "0.5.1"
