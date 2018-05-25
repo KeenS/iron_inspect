@@ -1,9 +1,10 @@
 extern crate iron;
+use iron::middleware::{AfterMiddleware, BeforeMiddleware};
 use iron::prelude::*;
-use iron::middleware::AfterMiddleware;
 
 use std::marker::PhantomData;
 
+pub enum InspectRequest {}
 pub enum InspectResult {}
 pub enum InspectResponse {}
 pub enum InspectError {}
@@ -17,6 +18,16 @@ impl<F> Inspect<F, ()> {
     pub fn new(f: F) -> Inspect<F, InspectResult>
     where
         F: Fn(&Request, Result<&Response, &IronError>),
+    {
+        Inspect {
+            f,
+            _phantom: PhantomData,
+        }
+    }
+
+    pub fn request(f: F) -> Inspect<F, InspectRequest>
+    where
+        F: Fn(&Request),
     {
         Inspect {
             f,
@@ -45,7 +56,16 @@ impl<F> Inspect<F, ()> {
     }
 }
 
-
+impl<F> BeforeMiddleware for Inspect<F, InspectRequest>
+where
+    F: Send + Sync + 'static,
+    F: Fn(&Request),
+{
+    fn before(&self, req: &mut Request) -> IronResult<()> {
+        (self.f)(req);
+        Ok(())
+    }
+}
 
 impl<F> AfterMiddleware for Inspect<F, InspectResult>
 where
